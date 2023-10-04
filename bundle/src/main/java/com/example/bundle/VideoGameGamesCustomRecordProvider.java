@@ -11,7 +11,6 @@ import com.bmc.arsys.rx.services.record.domain.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import java.util.*;
 
 /**
@@ -31,18 +30,15 @@ public class VideoGameGamesCustomRecordProvider implements ExternalRecordDataPro
      */
     private static final String PROVIDER_ID = "rawg.io (Games)";
     private static final String DATAPAGEQUERY_TYPE = "com.bmc.arsys.rx.application.record.datapage.RecordInstanceDataPageQuery";
-    private static RecordService recordService = null;
     private static final String WEB_API_QUERY_PARAMETER_ROOT = "GET_QUERY_PARAMETER_";
     private static final int RAWGIO_MAX_PAGE_SIZE = 25;
-    private static HashMap<String, FieldDefinition<? extends StorageType>> fieldDefinitionByFieldIdList = new HashMap<>();
-    private static HashMap<String, String> webApiQueryParametersList = new HashMap<>();
-    private static RecordDefinition webApiRecordDefinition = null;
     private static final String RAWGIO_COUNT_FIELD_NAME = "count";
-    private static String rawgioCountFieldId = null;
     private static final List<String> RAWGIO_SORTABLE_FIELDS = List.of("name", "released", "added", "created", "updated", "rating", "metacritic");
-
-    // LMA:: TODO:: Check that we don't pile up the hashmaps with the same values over and over again
-    // since it's static...
+    private RecordService recordService = null;
+    private HashMap<String, FieldDefinition<? extends StorageType>> fieldDefinitionByFieldIdList = new HashMap<>();
+    private HashMap<String, String> webApiQueryParametersList = new HashMap<>();
+    private RecordDefinition webApiRecordDefinition = null;
+    private String rawgioCountFieldId = null;
 
     /**
      * This method will get the Web Api and Custom Record Definitions and save some necessary

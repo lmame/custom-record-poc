@@ -26,7 +26,7 @@ public class MyApplication extends RxBundle {
         // registerService(new MyService());
         //
 
-        // Custom record definition
+        // Declaring the Custom Record Definition Provider
         registerDataProvider(new VideoGameGamesCustomRecordProvider());
 
         registerStaticWebResource(String.format("/%s", getId()), "/webapp");
