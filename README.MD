@@ -11,6 +11,7 @@ History:
 * [Updating your SDK / Developer Environment (if needed)](#update),
 * [Build and installation using the source code](#build),
 * [Challenges](#challenges),
+* [Configuration](#configuration),
 
 
 <a name="what-is-this"></a>
@@ -22,8 +23,16 @@ The goal of this example is double:
 
 <a name="installation"></a>
 ## Installation (using the zip file):
-You can just deploy the file "com.example.customrecordlibrary-1.0-SNAPSHOT.zip" on your development environment. The system must be at least 22.1.03.  
-Here are the [instructions](https://docs.bmc.com/docs/is221/deploying-your-digital-service-application-for-the-first-time-to-start-working-in-bmc-helix-innovation-studio-1039589996.html?src=search) to start working with Innovation Studio.
+* You can just deploy the file "com.example.customrecordlibrary-1.0-SNAPSHOT.zip" on your development environment. The system must be at least 22.1.03.  
+  * Here are the [instructions](https://docs.bmc.com/docs/is221/deploying-your-digital-service-application-for-the-first-time-to-start-working-in-bmc-helix-innovation-studio-1039589996.html?src=search) to start working with Innovation Studio.  
+* A codeless test bundle that consumes this custom record is available in the "_codeless bundle/" sub folder. Just deploy "com.example.games-1.0.0-INSTALL.zip".
+* Check the [Configuration](#configuration) section to:
+  * Create the:
+    * Web api connection,
+    * Data source connections,
+  * Perform the mappings:
+    * Web Api mapping,
+    * Data source mappings,
 
 > :memo:  
 > This bundle has been created using the 22.1.03 SDK and only contains Java code, so should work as well on 23.3.00 environments.
@@ -77,10 +86,15 @@ The reason is each Rest Api vendor implement (or not) those features with differ
 <a name="idea"></a>
 ## Idea:
 The idea of this example is to use a Custom Record object to act as an intermediate.  
+Some specs are available here in [Confluence](https://confluence.bmc.com/display/SolRD/%5BNon+Official%5D+Improve+Web+Api+External+Record+Definition) (WIP).    
 Instead of doing:
-```View with a grid -> External record (web api) ----[Rest Api]----> Vendor```
+```
+View with a grid -> External record (web api) ----[Rest Api]----> Vendor
+```
 We would have:
-```View with a grid -> Custom Record -> External record (web api) ----[Rest Api]----> Vendor```
+```
+View with a grid -> Custom Record -> External record (web api) ----[Rest Api]----> Vendor
+```
 
 Why do this, adding this additional step?  
 The custom record will:
@@ -91,7 +105,9 @@ The custom record will:
 <a name="example"></a>
 ## Example:
 Let's say that we have a grid and we scroll down to get the "second" page. The datapageequery would be this one (it is a POST call in the latest releases):
-```http://<server>:<port>/api/rx/application/datapage```
+```
+http://<server>:<port>/api/rx/application/datapage
+```
 ```json
 {
     "values": {
@@ -115,7 +131,9 @@ If we want page "2":
 "startIndex": "50",
 ```
 A vendor Rest API might have something like this however:  
-```http://<vendorRestApi>/?page=<pageId>&page_size=<pageSize>```
+```
+http://<vendorRestApi>/?page=<pageId>&page_size=<pageSize>
+```
   
 So in order to get the second pae we would have to "translate" the OOTB datapagequery options from:
 ```
@@ -138,6 +156,7 @@ Here is the Api documentation:
 > :memo:
 > We need an api key that needs to be provided with all api calls to Rawg.io:
 > ```https://api.rawg.io/api/games?key=<apiKey>```
+> You can use the api key "a6e082bd0974424b859762036fed6384" for the time being,
 
 > :memo:
 > The fieldId given in this example might be different in your implementation if you are following this example.  
@@ -228,13 +247,12 @@ The final query expression would then be:
 
 <a name="implementationJava"></a>
 ## Implementation details (Java):
-LMA:: TODO:: Java implementation.
+See [source code](./bundle/src/main/java/com/example/bundle/VideoGameGamesCustomRecordProvider.java) or the Confluence page for details.  
 
 
 <a name="configuration"></a>
 ## Configuration:
 ### Web Api Connection:
-LMA:: TODO:: Screenshots.
 Create a Web Api connection in Administration:
 * domain: api.rawg.io,
 * protocol: https,
@@ -242,11 +260,27 @@ Create a Web Api connection in Administration:
 * authentication: custom
   * (It does not really matter),
 * In the next screen, we can set the ```key``` query parameter with the Rawg.io api key, so the "key" will be sent with every rest api calls,
+  * Add query parameter
+    * On the left field: key
+    * On the right field: a6e082bd0974424b859762036fed6384
 
 
 ### Data source (Web Api):
-LMA:: TODO:: Screenshots.
 Create a Data source type "web api" in Administration using the web api connection created earlier.
+
+
+### Data source (Custom):
+Create a Data source type "Custom" using our coded provider "rawg.io (Games)" in Administration.
+
+
+### Web Api Mapping (if you use the demo bundles):
+Go in Administration in Web Api Mapping and for the bundle "Games" match for the "rawg.io" connection target the Web Api Connection you created.
+
+### Data Sources Mapping (if you use the demo bundles):
+Go in Administration in Data Source Mapping and for the bundle "Games" match:
+* For the "Rawg.io datasource" connection target the Web Api data source you created,
+* For the "Rawg.io Custom" connection target the Custom data source you created,
+
 
 
 ### Codeless bundle:
